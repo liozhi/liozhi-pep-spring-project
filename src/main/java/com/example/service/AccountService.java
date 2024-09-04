@@ -17,4 +17,11 @@ public class AccountService {
     public AccountService(AccountRepository accRepo){
         this.accRepo = accRepo;
     }
+
+    public Account createAccount(Account acc) {
+        if (acc.getUsername().length() > 0 &&!accRepo.existsByUsername(acc.getUsername()) && acc.getPassword().length() >= 4) {
+            return accRepo.save(acc);
+        }
+        return null;
+    }
 }
