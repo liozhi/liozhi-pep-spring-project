@@ -23,7 +23,7 @@ public class AccountService {
     }
 
     public ResponseEntity<Account> createAccount(Account acc) {
-        if (!accRepo.existsByUsername(acc.getUsername())) return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        if (accRepo.existsByUsername(acc.getUsername())) return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         if (acc.getUsername().length() > 0 && acc.getPassword().length() >= 4) {
             Account newAcc = accRepo.save(acc);
             return new ResponseEntity<>(newAcc, HttpStatus.OK);

@@ -53,36 +53,39 @@ public class SocialMediaController {
     @PostMapping(value = "/messages")
     @ResponseBody
     public ResponseEntity<Message> createMessage(@RequestBody Message msg) {
-        return null;
+        ResponseEntity<Message> newMsg = msgserv.addMessage(msg);
+        return newMsg;
     }
 
     @GetMapping("/messages")
     @ResponseBody
     public ResponseEntity<List<Message>> getAllMessages() {
-        return null;
+        return new ResponseEntity<List<Message>>(msgserv.getAllMessages(), HttpStatus.OK);
     }
     
     @GetMapping("/messages/{id}")
     @ResponseBody
     public ResponseEntity<Message> getMessageById(@PathVariable("id") long id) {
-        return null;
+        return new ResponseEntity<Message>(msgserv.getMessageById(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/messages/{id}")
     @ResponseBody
-    public ResponseEntity<Message> deleteMessageById(@PathVariable("id") long id) {
-        return null;
+    public ResponseEntity<Integer> deleteMessageById(@PathVariable("id") long id) {
+        Boolean deleteRes = msgserv.deleteMessage(id);
+        return (deleteRes ? new ResponseEntity<Integer>(1, HttpStatus.OK) : new ResponseEntity<>(null, HttpStatus.OK));
     }
 
     @PatchMapping("/messages/{id}")
     @ResponseBody
-    public ResponseEntity<Message> updateMessageById(@PathVariable("id") long id, @RequestBody Message msg) {
-        return null;
+    public ResponseEntity<Integer> updateMessageById(@PathVariable("id") long id, @RequestBody Message msg) {
+        Boolean updateRes = msgserv.updateMessage(id, msg.getMessageText());
+        return (updateRes ? new ResponseEntity<Integer>(1, HttpStatus.OK) : new ResponseEntity<>(null, HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/accounts/{id}/messages")
     @ResponseBody
     public ResponseEntity<List<Message>> getAllMessagesByAccountId(@PathVariable("id") long id) {
-        return null;
+        return new ResponseEntity<List<Message>>(msgserv.getMessagesByUserId(id), HttpStatus.OK);
     }
 }
