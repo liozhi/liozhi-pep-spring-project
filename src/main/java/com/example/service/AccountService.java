@@ -1,6 +1,5 @@
 package com.example.service;
 
-
 import com.example.entity.Account;
 import com.example.entity.Message;
 import com.example.repository.AccountRepository;
@@ -8,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.util.Optional;
 
-@Service
 @Transactional
+@Service
 public class AccountService {
     AccountRepository accRepo;
 
@@ -20,18 +22,21 @@ public class AccountService {
         this.accRepo = accRepo;
     }
 
-    public Account createAccount(Account acc) {
-        if (acc.getUsername().length() > 0 &&!accRepo.existsByUsername(acc.getUsername()) && acc.getPassword().length() >= 4) {
-            return accRepo.save(acc);
+    public ResponseEntity<Account> createAccount(Account acc) {
+        if (!accRepo.existsByUsername(acc.getUsername())) return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        if (acc.getUsername().length() > 0 && acc.getPassword().length() >= 4) {
+            Account newAcc = accRepo.save(acc);
+            return new ResponseEntity<>(newAcc, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    public Account login(Account acc) {
+    public ResponseEntity<Account> login(Account acc) {
         Optional<Account> optAcc = accRepo.getByUserAndPass(acc.getUsername(), acc.getPassword());
         if (optAcc.isPresent()) {
-            return optAcc.get();
+            Account loginAcc = optAcc.get();
+            return new ResponseEntity<>(loginAcc, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 }
